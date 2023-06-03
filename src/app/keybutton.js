@@ -1,6 +1,8 @@
 const KeyButton = (props) => {
     return (
-        <div className='flex justify-center align-middle w-12 h-12 border-2 border-solid border-black m-0.5'>{props.letter}</div>
+        <button className='flex justify-center items-center w-11 h-12 border-2 border-solid border-black m-0.5' onClick={() => props.onClick(props.letter)}>
+            {props.letter}
+        </button>
     );
 };
 
