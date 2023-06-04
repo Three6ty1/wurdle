@@ -10,11 +10,19 @@ const keyboard = [
   ['ENTER', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'BACK'],
 ]
 
+const word = 'crane';
+
 export default function Home() {
-  const [guess, setGuess] = React.useState(['', '', '', '', '']);
+  const [guess, setGuess] = React.useState('');
+  const [row, setRow] = React.useState(0);
 
   const handleLetterClick = (e) => {
-    console.log(e)
+    if (guess.length == 5) {
+      return;
+    }
+
+    let newGuess = guess + e;
+    setGuess(newGuess);
   }
 
   const handleEnterClick = (e) => {
@@ -38,15 +46,24 @@ export default function Home() {
       <br />
       <br />
       <div className='flex flex-col h-[420px] border-2 border-solid border-red-500 '>
-        {[...Array(6)].map((e, i) => (
-          <div key={'row' + i}className='flex flex-row w-[350px] h-1/6'>
-            <GuessBox />
-            <GuessBox />
-            <GuessBox />
-            <GuessBox />
-            <GuessBox />
-          </div>
-        ))}
+        {[...Array(6)].map((e, i) => {
+          if(i == row) {
+            return (
+              <div key={'row' + i} className='flex flex-row w-[350px] h-1/6 border-2 border-solid border-blue-500'>
+                {[...Array(5)].map((f, j) => (
+                  <GuessBox key={'row' + i + 'col' + j} active='true' />
+                ))}
+              </div>
+            )
+          }
+          return (
+            <div key={'row' + i} className='flex flex-row w-[350px] h-1/6'>
+              {[...Array(5)].map((f, j) => (
+                <GuessBox key={'row' + i + 'col' + j}/>
+              ))}
+            </div>
+          )
+        })}
       </div>
       <br />
       <br />
