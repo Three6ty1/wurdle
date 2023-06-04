@@ -18,7 +18,20 @@ function isLetter(key) {
 }
 
 export default function Home() {
-  const [prevGuesses, setPrevGuesses] = React.useState([['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]);
+  const [board, setBoard] = React.useState(() => {
+    const i = [];
+    [...Array(6)].map(() => {
+      let j = [];
+      [...Array(5)].map(() => {
+        j.push({letter: '', state: KeyState.NotGuessed});
+      });
+      i.push(j);
+
+      return;
+    });
+
+    return i;
+  });
   const [guess, setGuess] = React.useState('');
   const [row, setRow] = React.useState(0);
   const [playing, setPlaying] = React.useState('true');
@@ -80,9 +93,7 @@ export default function Home() {
       alert("not 5 letter word")
       return;  // TODO: Error pop up
     }
-      let newPrevGuesses = [...prevGuesses];
-    newPrevGuesses[row] = guess.split('');
-    setPrevGuesses(newPrevGuesses);
+    let newBoard = [...board];
     
     // compare guess to word
     // for each letter, 
@@ -90,20 +101,23 @@ export default function Home() {
     // Correct > Position > Missing > NotGuessed
     let newKeyMap = keyMap;
     for (let i = 0; i < 5; i++) {
+      newBoard[row][i].letter = guess[i];
+
       if (!word.includes(guess[i])) {     // Missing
-        console.log('missing');
         if (newKeyMap[guess[i]] > KeyState.Missing) newKeyMap[guess[i]] = KeyState.Missing;
+        newBoard[row][i].state = KeyState.Missing;
       }
       if (word.includes(guess[i])) {
-        console.log('wrong pos');
         if (newKeyMap[guess[i]] > KeyState.Position) newKeyMap[guess[i]] = KeyState.Position;
+        newBoard[row][i].state = KeyState.Position;
       }
       if (word[i] == guess[i]) {
-        console.log('correct');
         newKeyMap[guess[i]] = KeyState.Correct;
+        newBoard[row][i].state = KeyState.Correct;
       }
     }
 
+    setBoard(newBoard);
     setKeyMap(newKeyMap);
 
     if (guess == word) {
@@ -135,20 +149,20 @@ export default function Home() {
       <br />
       <br />
       <div className='flex flex-col h-[420px] border-2 border-solid border-red-500 '>
-        {prevGuesses.map((e, i) => {
+        {board.map((currRow, i) => {
           if(i == row) {
             return (
               <div key={'row' + i} className='flex flex-row w-[350px] h-1/6 border-2 border-solid border-blue-500'>
-                {[...Array(5)].map((f, j) => (
-                  <GuessBox key={'row' + i + 'col' + j} letter={guess[j]} />
+                {[...Array(5)].map((currCol, j) => (
+                  <GuessBox key={'row' + i + 'col' + j} letter={guess[j]} state={currRow[j].state}/>
                 ))}
               </div>
             )
           }
           return (
             <div key={'row' + i} className='flex flex-row w-[350px] h-1/6'>
-              {[...Array(5)].map((f, j) => (
-                <GuessBox key={'row' + i + 'col' + j} letter={e[j]} />
+              {[...Array(5)].map((currCol, j) => (
+                <GuessBox key={'row' + i + 'col' + j} letter={currRow[j].letter} state={currRow[j].state}/>
               ))}
             </div>
           )
