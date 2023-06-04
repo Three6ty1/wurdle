@@ -1,7 +1,6 @@
-const state = {
-    Guessed: 'missing',
-    Present: 'present',
-    Correct: 'correct',
-    Active: 'active',
-    Inactive: 'inactive',
+export const KeyState = {
+    Correct: '0',
+    Position: '1',
+    Missing: '2',
+    NotGuessed: '3',
 }
