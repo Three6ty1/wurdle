@@ -13,35 +13,52 @@ const keyboard = [
 
 const word = ['C', 'R', 'A', 'N', 'E'];
 
+function isLetter(key) {
+  return key.match(/[A-Z]/i);
+}
+
 export default function Home() {
   const [prevGuesses, setPrevGuesses] = React.useState([['P', 'R', 'E', 'V', 'G'], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]);
-  const [guess, setGuess] = React.useState('ABCA');
+  const [guess, setGuess] = React.useState('');
   const [row, setRow] = React.useState(1);
 
   const handleLetterClick = (e) => {
-    if (guess.length == 5)  return;
+    if (guess.length == 5) return;
 
-    let newGuess = guess + e;
+    let newGuess = guess + e.toUpperCase();
     setGuess(newGuess);
   }
 
-  const handleEnterClick = (e) => {
-    console.log(e)
+  const handleEnterClick = () => {
+    if (guess.length < 5) return;  // TODO: Error pop up
+    let newPrevGuesses = [...prevGuesses];
+    newPrevGuesses[row] = guess.split('');
+    setPrevGuesses(newPrevGuesses);
+    setRow(row + 1);
+    setGuess('');
   }
   
-  const handleBackClick = (e) => {
+  const handleBackClick = () => {
     if (guess.length == 0) return;
 
     let newGuess = guess.slice(0, -1);
     setGuess(newGuess);
   }
 
-  React.useEffect(() => {
-    document.addEventListener('keydown', (e) => {
-      if (e.repeat) return;
-      console.log(e.key)
-    })
-  }, [])
+  onkeydown = (e) => {
+    if (e.repeat) return;
+
+    switch (e.key) {
+      case 'Backspace':
+        handleBackClick();
+        break;
+      case 'Enter':
+        handleEnterClick();
+        break;
+      default:
+        if (isLetter(e.key)) handleLetterClick(e.key);
+    }
+  }
 
   return (
     <main className='flex min-h-screen flex-col items-center p-24 bg-white dark:bg-gray-900'>
