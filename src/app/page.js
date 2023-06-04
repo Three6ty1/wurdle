@@ -23,6 +23,16 @@ export default function Home() {
   const [row, setRow] = React.useState(1);
   const [playing, setPlaying] = React.useState('true');
 
+  React.useEffect(() => {
+    const fetchWord = async () => {
+      const request = await fetch('https://random-word-api.vercel.app/api?words=1&length=5&type=uppercase');
+      const data = await request.json();
+      console.log(data);
+    }
+
+    fetchWord();
+  })
+
   const handleLetterClick = (e) => {
     if (guess.length == 5 || !playing) return;
 
