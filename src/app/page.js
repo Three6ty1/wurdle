@@ -86,13 +86,20 @@ export default function Home() {
     setGuess(newGuess);
   }
 
-  const handleEnterClick = () => {
+  const handleEnterClick = async () => {
     if (!playing) return;
 
     if (guess.length < 5) {
       alert("not 5 letter word")
       return;  // TODO: Error pop up
     }
+
+    const response = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + guess);
+    if (response.status !== 200) {
+      alert("not a valid word");
+      return; // TODO: Word shake instead of alert
+    }
+
     let newBoard = [...board];
     
     // compare guess to word
