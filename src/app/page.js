@@ -128,8 +128,8 @@ export default function Home() {
     setKeyMap(newKeyMap);
 
     if (guess == word) {
-      alert('You guessed the word!');
       setPlaying(false);
+      alert('You guessed the word!');
     }
 
     setRow(row + 1);
@@ -144,7 +144,7 @@ export default function Home() {
   }
 
   React.useEffect(() => {
-    if (row == 6) {
+    if (row == 6 && playing === true) {
       alert('you didnt guess the word. it was ' + word);
       setPlaying(false);
     }
