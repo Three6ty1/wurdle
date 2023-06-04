@@ -14,36 +14,53 @@ const keyboard = [
 const word = ['C', 'R', 'A', 'N', 'E'];
 
 function isLetter(key) {
-  return key.match(/[A-Z]/i);
+  return key.length === 1 && key.match(/[A-Z]/i);
 }
 
 export default function Home() {
   const [prevGuesses, setPrevGuesses] = React.useState([['P', 'R', 'E', 'V', 'G'], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]);
   const [guess, setGuess] = React.useState('');
   const [row, setRow] = React.useState(1);
+  const [playing, setPlaying] = React.useState('true');
 
   const handleLetterClick = (e) => {
-    if (guess.length == 5) return;
+    if (guess.length == 5 || !playing) return;
 
     let newGuess = guess + e.toUpperCase();
     setGuess(newGuess);
   }
 
   const handleEnterClick = () => {
-    if (guess.length < 5) return;  // TODO: Error pop up
-    let newPrevGuesses = [...prevGuesses];
+    if (!playing) return;
+
+    if (guess.length < 5) {
+      alert("not 5 letter word")
+      return;  // TODO: Error pop up
+    }
+      let newPrevGuesses = [...prevGuesses];
     newPrevGuesses[row] = guess.split('');
     setPrevGuesses(newPrevGuesses);
+    if (guess == word.join('')) {
+      alert('You guessed the word!');
+      setPlaying(false);
+    }
     setRow(row + 1);
     setGuess('');
   }
   
   const handleBackClick = () => {
-    if (guess.length == 0) return;
+    if (guess.length == 0 || !playing) return;
 
     let newGuess = guess.slice(0, -1);
     setGuess(newGuess);
   }
+
+  React.useEffect(() => {
+    if (row == 6) {
+      alert('you didnt guess the word. it was ' + word);
+      setPlaying(false);
+    }
+  }, [row]);
 
   onkeydown = (e) => {
     if (e.repeat) return;
