@@ -3,6 +3,7 @@ import GuessBox from "./guessbox";
 import React from "react";
 import KeyButton from "./keybutton";
 import ActionButton from "./actionbutton";
+import State from "./state";
 
 const keyboard = [
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -10,16 +11,15 @@ const keyboard = [
   ['ENTER', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'BACK'],
 ]
 
-const word = 'crane';
+const word = ['C', 'R', 'A', 'N', 'E'];
 
 export default function Home() {
-  const [guess, setGuess] = React.useState('');
-  const [row, setRow] = React.useState(0);
+  const [prevGuesses, setPrevGuesses] = React.useState([['P', 'R', 'E', 'V', 'G'], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]);
+  const [guess, setGuess] = React.useState('ABCA');
+  const [row, setRow] = React.useState(1);
 
   const handleLetterClick = (e) => {
-    if (guess.length == 5) {
-      return;
-    }
+    if (guess.length == 5)  return;
 
     let newGuess = guess + e;
     setGuess(newGuess);
@@ -30,7 +30,10 @@ export default function Home() {
   }
   
   const handleBackClick = (e) => {
-    console.log(e)
+    if (guess.length == 0) return;
+
+    let newGuess = guess.slice(0, -1);
+    setGuess(newGuess);
   }
 
   React.useEffect(() => {
@@ -46,12 +49,12 @@ export default function Home() {
       <br />
       <br />
       <div className='flex flex-col h-[420px] border-2 border-solid border-red-500 '>
-        {[...Array(6)].map((e, i) => {
+        {prevGuesses.map((e, i) => {
           if(i == row) {
             return (
               <div key={'row' + i} className='flex flex-row w-[350px] h-1/6 border-2 border-solid border-blue-500'>
                 {[...Array(5)].map((f, j) => (
-                  <GuessBox key={'row' + i + 'col' + j} active='true' />
+                  <GuessBox key={'row' + i + 'col' + j} letter={guess[j]} />
                 ))}
               </div>
             )
@@ -59,7 +62,7 @@ export default function Home() {
           return (
             <div key={'row' + i} className='flex flex-row w-[350px] h-1/6'>
               {[...Array(5)].map((f, j) => (
-                <GuessBox key={'row' + i + 'col' + j}/>
+                <GuessBox key={'row' + i + 'col' + j} letter={e[j]} />
               ))}
             </div>
           )
