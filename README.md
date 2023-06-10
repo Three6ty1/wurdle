@@ -2,9 +2,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## TODO list
 - Customizable UI
-- The game itself
-- Keyboard with colours to match
-- Fetch words from dictionary API? Cache it?
+- ~~The game itself~~
+- ~~Keyboard with colours to match~~
+- ~~Fetch words from dictionary API?~~ Cache it?
 - Dark and light modes
 - Stat tracking
 - Optional Stat graph

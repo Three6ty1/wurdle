@@ -17,36 +17,47 @@ function isLetter(key) {
   return key.length === 1 && key.match(/[A-Z]/i);
 }
 
-export default function Home() {
-  const [board, setBoard] = React.useState(() => {
-    const i = [];
-    [...Array(6)].map(() => {
-      let j = [];
-      [...Array(5)].map(() => {
-        j.push({letter: '', state: KeyState.NotGuessed});
-      });
-      i.push(j);
-
-      return;
+function defaultBoard() {
+  const i = [];
+  [...Array(6)].map(() => {
+    let j = [];
+    [...Array(5)].map(() => {
+      j.push({letter: '', state: KeyState.NotGuessed});
     });
+    i.push(j);
 
-    return i;
+    return;
   });
+
+  return i;
+}
+
+function defaultKeyMap() {
+  const i = {};
+  for (const letter of alphabet) {
+    i[letter] = KeyState.NotGuessed;
+  }
+  return i
+}
+
+export default function Home() {
+  const [board, setBoard] = React.useState(() => defaultBoard());
   const [guess, setGuess] = React.useState('');
   const [row, setRow] = React.useState(0);
-  const [playing, setPlaying] = React.useState('true');
+  const [playing, setPlaying] = React.useState(true);
   const [word, setWord] = React.useState('');
-  const [keyMap, setKeyMap] = React.useState(() => {
-    const x = {};
-    for (const letter of alphabet) {
-      x[letter] = KeyState.NotGuessed;
-    }
-    return x
-  });
+  const [keyMap, setKeyMap] = React.useState(() => defaultKeyMap());
   
+  if (localStorage.getItem('wins') === null) {
+    localStorage.setItem('wins', 0);
+  }
+  if (localStorage.getItem('loss') === null) {
+    localStorage.setItem('loss', 0);
+  }
 
   React.useEffect(() => {
     const fetchWord = async () => {
+      if (playing != true) return;
       const request = await fetch('https://random-word-api.vercel.app/api?words=1&length=5&type=uppercase');
       const data = await request.json();
       setWord(data[0]);
@@ -54,7 +65,7 @@ export default function Home() {
     }
 
     fetchWord();
-  }, [])
+  }, [playing])
 
   const onKeyDown = (e) => {
     if (e.repeat) return;
@@ -128,6 +139,7 @@ export default function Home() {
     setKeyMap(newKeyMap);
 
     if (guess == word) {
+      localStorage.setItem('wins', parseInt(localStorage.getItem('wins')) + 1);
       setPlaying(false);
       alert('You guessed the word!');
     }
@@ -143,8 +155,19 @@ export default function Home() {
     setGuess(newGuess);
   }
 
+  const newGame = () => {
+    setBoard(() => defaultBoard());
+    setGuess('');
+    setRow(0);
+    setPlaying(true);
+    setKeyMap(() => defaultKeyMap());
+  }
+
+  // seperate function, relies on row
+  // if we put it in the handleenter key it might race.
   React.useEffect(() => {
-    if (row == 6 && playing === true) {
+    if (row >= 6 && playing === true) {
+      localStorage.setItem('loss', parseInt(localStorage.getItem('loss')) + 1);
       alert('you didnt guess the word. it was ' + word);
       setPlaying(false);
     }
@@ -176,6 +199,7 @@ export default function Home() {
         })}
       </div>
       <br />
+      {playing ? <br /> : <button onClick={() => newGame()} >Start new game</button>}
       <br />
       <div className='flex flex-col border-2 border-solid border-red-500 w-[600px] h-[200px]'>
         {keyboard.map((row, i) => (
