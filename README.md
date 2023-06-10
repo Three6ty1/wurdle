@@ -1,12 +1,15 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## TODO list
-- Customizable UI
+- Complete UI
+- Animations
+- Borders and curves
+- Fonts
 - ~~The game itself~~
 - ~~Keyboard with colours to match~~
 - ~~Fetch words from dictionary API?~~ Cache it?
 - Dark and light modes
-- Stat tracking
+- ~~Stat tracking~~
 - Optional Stat graph
 
 ## Getting Started

@@ -40,6 +40,12 @@ function defaultKeyMap() {
   return i
 }
 
+function updateStats(isWin, guesses) {
+  let stats = JSON.parse(localStorage.getItem('stats'));
+  isWin ? (stats['win'] += 1, stats[guesses] += 1) : stats['lose'] += 1;
+  localStorage.setItem('stats', JSON.stringify(stats));
+}
+
 export default function Home() {
   const [board, setBoard] = React.useState(() => defaultBoard());
   const [guess, setGuess] = React.useState('');
@@ -48,11 +54,8 @@ export default function Home() {
   const [word, setWord] = React.useState('');
   const [keyMap, setKeyMap] = React.useState(() => defaultKeyMap());
   
-  if (localStorage.getItem('wins') === null) {
-    localStorage.setItem('wins', 0);
-  }
-  if (localStorage.getItem('loss') === null) {
-    localStorage.setItem('loss', 0);
+  if (localStorage.getItem('stats') === null) {
+    localStorage.setItem('stats', JSON.stringify({win: 0, lose: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}));
   }
 
   React.useEffect(() => {
@@ -139,7 +142,7 @@ export default function Home() {
     setKeyMap(newKeyMap);
 
     if (guess == word) {
-      localStorage.setItem('wins', parseInt(localStorage.getItem('wins')) + 1);
+      updateStats(true, row);
       setPlaying(false);
       alert('You guessed the word!');
     }
@@ -167,7 +170,7 @@ export default function Home() {
   // if we put it in the handleenter key it might race.
   React.useEffect(() => {
     if (row >= 6 && playing === true) {
-      localStorage.setItem('loss', parseInt(localStorage.getItem('loss')) + 1);
+      updateStats(false, row);
       alert('you didnt guess the word. it was ' + word);
       setPlaying(false);
     }
